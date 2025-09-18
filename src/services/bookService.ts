@@ -209,3 +209,12 @@ export const returnBook = (id: string): Book | null => {
 export const getRecommendations = (): Book[] => {
     return structuredClone(books.slice(0, 3));
 };
+
+/**
+ * Gets all books that are currently available (not borrowed).
+ * 
+ * @returns {Book[]} Array of books where isBorrowed is false
+ */
+export const getAvailableBooks = (): Book[] => {
+    return structuredClone(books.filter(book => book.isBorrowed === false));
+};

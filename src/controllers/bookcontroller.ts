@@ -124,3 +124,18 @@ export const getRecommendations = (_req: Request, res: Response): void => {
         });
     }
 };
+
+export const availableBooks = (_req: Request, res: Response): void => {
+    try {
+        const availableBooks = bookService.getAvailableBooks();
+        res.status(HTTP_STATUS.OK).json({
+            message: "Available books",
+            data: availableBooks,
+            count: availableBooks.length,
+        });
+    } catch (error) {
+        res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
+            message: "Error retrieving available books",
+        });
+    }
+};
