@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { HTTP_STATUS } from "../constants/httpConstants";
 import * as bookService from "../services/bookService";
+import { Book } from "../models/bookModel";
 
 export const getAllBooks = (_req: Request, res: Response): void => {
     try {
@@ -18,8 +19,44 @@ export const getAllBooks = (_req: Request, res: Response): void => {
 
 export const addBook = (req: Request, res: Response): void => {
     try {
-        const newBook = req.body;
-        const createdBook = bookService.addBook(newBook);
+        // I need to get the fields from the request body
+        const { title, author, genre } = req.body;
+        
+        // I trim whitespace before checking if they're valid
+        const trimmedTitle = title?.trim();
+        const trimmedAuthor = author?.trim();
+        const trimmedGenre = genre?.trim();
+        
+        // I check each field to make sure it exists and isn't empty
+        if (!trimmedTitle) {
+            res.status(HTTP_STATUS.BAD_REQUEST).json({
+                message: "Title is required and cannot be empty",
+            });
+            return;
+        }
+        
+        if (!trimmedAuthor) {
+            res.status(HTTP_STATUS.BAD_REQUEST).json({
+                message: "Author is required and cannot be empty",
+            });
+            return;
+        }
+        
+        if (!trimmedGenre) {
+            res.status(HTTP_STATUS.BAD_REQUEST).json({
+                message: "Genre is required and cannot be empty",
+            });
+            return;
+        }
+        
+        // I create the book data with trimmed values
+        const bookData: Pick<Book, "title" | "author" | "genre"> = {
+            title: trimmedTitle,
+            author: trimmedAuthor,
+            genre: trimmedGenre,
+        };
+        
+        const createdBook = bookService.addBook(bookData);
         res.status(HTTP_STATUS.CREATED).json({
             message: "Book added",
             data: createdBook,
